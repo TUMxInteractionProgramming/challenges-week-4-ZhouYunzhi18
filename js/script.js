@@ -2,34 +2,6 @@
 console.log("App is alive");
 
 /**
- * #6 #Switcher function for the #channels name in the right app bar
- * @param channelName Text which is set
- */
-function switchChannel(channelName) {
-    //Log the channel switch
-    console.log("Tuning in to channel", channelName);
-
-    //Write the new channel to the right app bar
-    document.getElementById('channel-name').innerHTML = channelName;
-
-    //#6 change the #channel #location
-    document.getElementById('channel-location').innerHTML = 'by <a href="http://w3w.co/upgrading.never.helps" target="_blank"><strong>upgrading.never.helps</strong></a>';
-
-    /* #6 #liking channels on #click */
-    $('#channel-star').attr('src', 'http://ip.lfe.mw.tum.de/sections/star-o.png');
-
-    /* #6 #highlight the selected #channel.
-       This is inefficient (jQuery has to search all channel list items), but we'll change it later on */
-    $('#channels li').removeClass('selected');
-    $('#channels li:contains(' + channelName + ')').addClass('selected');
-}
-
-/* #6 #liking a channel on #click */
-function star() {
-    $('#channel-star').attr('src', 'http://ip.lfe.mw.tum.de/sections/star.png');
-}
-
-/**
  * #6 #taptab selects the given tab
  * @param tabId #id of the tab
  */
@@ -50,4 +22,37 @@ function selectTab(tabId) {
 function toggleEmojis() {
     /* $('#emojis').show(); // #show */
     $('#emojis').toggle(); // #toggle
+}
+
+var currentLocation = {
+    longitude: 48.257064,
+    latitude: 11.652099,
+    what3words: 'eats.mistaken.backers'
+}
+
+function Message(text) {
+    this.createdBy = currentLocation.what3words;
+    this.latitude = currentLocation.latitude;
+    this.longitude = currentLocation.longitude;
+    this.createdOn = new Date(Date.now());
+    this.expiresOn = new Date((new Date()).getTime() + 15);
+    this.text = text;
+    this.own = true;
+}
+
+
+
+function createMessageElement(messageObject) {
+
+    var expiresIn = Math.round(messageObject.expiresOn - messageObject.createdOn);
+    
+    $('<div>').html('<h3><a href="http://w3w.co/' + currentLocation.what3words + '" target="_blank"><strong>' + currentLocation.what3words + '</strong></a>' + messageObject.createdOn + '<em>' + expiresIn + ' min. left</em></h3><p>' + messageObject.text + '</p><button>+5 min.</button>').addClass('message').appendTo('#messages');
+}
+
+function sendMessage() {
+
+    var myMessage = new Message($("#chat-bar input").val());
+    createMessageElement(myMessage);
+    $("#chat-bar input").val('');
+    $("#messages").scrollTop(messages.scrollHeight);
 }
